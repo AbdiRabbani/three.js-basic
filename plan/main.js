@@ -51,9 +51,8 @@ const raycaster = new THREE.Raycaster();
 let intersects;
 
 window.addEventListener('mousemove', function (e) {
-    console.log(e);
     mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
-    mousePosition.y = - (e.clientY / window.innerHeight) * 2 + 1; // Fix this line
+    mousePosition.y = -(e.clientY / window.innerHeight) * 2 + 1; // Fix this line
     raycaster.setFromCamera(mousePosition, camera);
     intersects = raycaster.intersectObjects(scene.children);
     intersects.forEach(function (intersect) {
@@ -66,6 +65,24 @@ window.addEventListener('mousemove', function (e) {
 
 const grid = new THREE.GridHelper(20, 20);
 scene.add(grid);
+
+const sphereMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.4, 4, 2),
+    new THREE.MeshBasicMaterial({
+        wireframe: true,
+        color: 0xFFEA00
+    })
+)
+
+window.addEventListener('mousedown', function () {
+    intersects.forEach(function (intersect) {
+        if (intersect.object.name === 'ground') {
+            const sphereClone = sphereMesh.clone();
+            sphereClone.position.copy(highlightMesh.position);
+            scene.add(sphereClone);
+        }
+    });
+})
 
 function animation() {
     requestAnimationFrame(animation);
